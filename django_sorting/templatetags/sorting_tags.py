@@ -161,6 +161,9 @@ class SortedDataNode(template.Node):
         value = self.queryset_var.resolve(context)
         order_by = context['request'].field
         if len(order_by) > 1:
+            if not order_by in model._meta.get_all_field_names():
+                raise Http404('Invalid field sorting. If DEBUG were set to ' +
+                              'False, an HTTP 404 page would have been shown instead.')
             try:
                 context[key] = value.order_by(order_by)
             except template.TemplateSyntaxError:
