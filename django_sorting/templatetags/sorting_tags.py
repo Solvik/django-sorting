@@ -6,20 +6,20 @@ register = template.Library()
 
 DEFAULT_SORT_UP = getattr(settings, 'DEFAULT_SORT_UP' , '&uarr;')
 DEFAULT_SORT_DOWN = getattr(settings, 'DEFAULT_SORT_DOWN' , '&darr;')
-INVALID_FIELD_RAISES_404 = getattr(settings, 
+INVALID_FIELD_RAISES_404 = getattr(settings,
         'SORTING_INVALID_FIELD_RAISES_404' , False)
 
 sort_directions = {
-    'asc': {'icon':DEFAULT_SORT_UP, 'inverse': 'desc'}, 
-    'desc': {'icon':DEFAULT_SORT_DOWN, 'inverse': 'asc'}, 
-    '': {'icon':DEFAULT_SORT_DOWN, 'inverse': 'asc'}, 
+    'asc': {'icon':DEFAULT_SORT_UP, 'inverse': 'desc'},
+    'desc': {'icon':DEFAULT_SORT_DOWN, 'inverse': 'asc'},
+    '': {'icon':DEFAULT_SORT_DOWN, 'inverse': 'asc'},
 }
 
 def anchor(parser, token):
     """
     depreciated: will be removed in a later version
-    
-    Parses a tag that's supposed to be in this format: {% anchor field title %}    
+
+    Parses a tag that's supposed to be in this format: {% anchor field title %}
     """
     bits = [b.strip('"\'') for b in token.split_contents()]
     if len(bits) < 2:
@@ -29,15 +29,15 @@ def anchor(parser, token):
     except IndexError:
         title = bits[1].capitalize()
     return OldSortAnchorNode(bits[1].strip(), title.strip())
-    
+
 
 class OldSortAnchorNode(template.Node):
     """
     depreciated: will be removed in a later version
-    
-    Renders an <a> HTML tag with a link which href attribute 
+
+    Renders an <a> HTML tag with a link which href attribute
     includes the field on which we sort and the direction.
-    and adds an up or down arrow if the field is the one 
+    and adds an up or down arrow if the field is the one
     currently being sorted on.
 
     Eg.
@@ -95,9 +95,9 @@ def sort_anchor(parser, token):
 
 class SortAnchorNode(template.Node):
     """
-    Renders an <a> HTML tag with a link which href attribute 
+    Renders an <a> HTML tag with a link which href attribute
     includes the field on which we sort and the direction.
-    and adds an up or down arrow if the field is the one 
+    and adds an up or down arrow if the field is the one
     currently being sorted on.
 
     Eg.
@@ -112,8 +112,8 @@ class SortAnchorNode(template.Node):
     def render(self, context):
         request = context['request']
         getvars = request.GET.copy()
-        field = self.field.resolve(context)
-        title = self.title.resolve(context)
+        field = unicode(self.field.resolve(context))
+        title = unicode(self.title.resolve(context))
         if 'sort' in getvars:
             sortby = getvars['sort']
             del getvars['sort']
